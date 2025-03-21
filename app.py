@@ -28,7 +28,10 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
 
+        groups[current_group].update()
+
         screen.fill((0, 0, 0))
+
         groups[current_group].render()
         
         pygame.display.flip()

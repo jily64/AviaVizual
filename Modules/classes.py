@@ -1,9 +1,9 @@
 
 
 class QVector3:
-    x:float
-    y:float
-    z:float
+    roll:float
+    pitch:float
+    yaw:float
 
     def __init__(self, x=0, y=0, z=0):
-        self.x, self.y, self.z = x, y, z
+        self.roll, self.pitch, self.yaw = x, y, z
