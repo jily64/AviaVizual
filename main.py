@@ -1,9 +1,3 @@
-from pymavlink import mavutil
+from Modules import Func
 
-# Подключение к MAVLink
-master = mavutil.mavlink_connection('udp:192.168.4.1:14550')
-
-# Ждём HEARTBEAT
-print("Ждём HEARTBEAT...")
-master.wait_heartbeat()
-print("Соединение установлено!")
+print(Func.count_speed_module(-100, 500))

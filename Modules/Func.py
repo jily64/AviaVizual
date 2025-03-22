@@ -17,3 +17,6 @@ def rotate_point(center, point, angle):
     y_new = s * (px - cx) + c * (py - cy) + cy
 
     return x_new, y_new
+
+def count_speed_module(vx, vy):
+    return round(abs(math.sqrt(vx**2 + vy**2)), 2)

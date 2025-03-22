@@ -1,70 +1,30 @@
-import serial.tools.list_ports
 from pymavlink import mavutil
-import socket
+from Modules import classes
+import math
 
-def find_serial_device():
-    """
-    Функция для поиска MAVLink-устройства через последовательные порты.
-    """
-    print("Сканирую последовательные порты...")
-    ports = serial.tools.list_ports.comports()
-    for port in ports:
-        try:
-            # Пытаемся подключиться к устройству
-            connection = mavutil.mavlink_connection(port.device, baud=115200, timeout=2)
-            if connection:
-                print(f"Устройство MAVLink найдено на порту {port.device}")
-                return connection
-        except Exception as e:
-            pass
-    return None
+class Adapter:
+    def __init__(self):
+        self.connection = mavutil.mavlink_connection('udp:127.0.0.1:14550', dialect="common")
 
-def find_wifi_device(ip="127.0.0.1", port=14550):
-    """
-    Функция для проверки подключения MAVLink-устройства через Wi-Fi.
-    """
-    try:
-        # Проверяем, доступен ли сокет
-        """   sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.settimeout(2)
-        sock.connect((ip, port))
-        sock.close()
-        """
-        # Если сокет доступен, создаем MAVLink-соединение
-        connection = mavutil.mavlink_connection(f"udp:{ip}:{port}")
-        heartbeat = connection.recv_match(type='HEARTBEAT', blocking=True, timeout=5)
-        print(heartbeat)
-        print(f"Устройство MAVLink найдено по Wi-Fi: {ip}:{port}")
-        return connection
-    except Exception as e:
-        pass
-    return None
+        if self.heartbeat():
+            print("MAVAdapter: Connected")
+        
 
-def main():
-    """
-    Основная функция для автоматического определения подключения MAVLink-устройства.
-    """
-    print("Ищу MAVLink-устройство...")
+    def heartbeat(self):
+        self.connection.wait_heartbeat()
+        return True
     
-    # Сначала проверяем последовательные порты
-    serial_connection = find_serial_device()
-    if serial_connection:
-        print("Соединение установлено через последовательный порт!")
-        return serial_connection
-
-    # Если не найдено, пробуем подключение по Wi-Fi
-    wifi_connection = find_wifi_device()
-    if wifi_connection:
-        print("Соединение установлено через Wi-Fi!")
-        return wifi_connection
-
-    print("Не удалось найти MAVLink-устройство. Проверьте подключение.")
-    return None
-
-def connect():
-    connection = main()
-    if connection:
-        print("Готов к работе с MAVLink-устройством!")
-        return connection
-    else:
-        print("Подключение не удалось.")
+    def get_current_heading(self):
+        message = self.connection.recv_match(type='VFR_HUD', blocking=True)
+        return message.heading
+    
+    def get_ratio(self):
+        message = self.connection.recv_match(type='ATTITUDE', blocking=True)
+        return classes.QVector3(roll=math.degrees(message.roll), pitch=math.degrees(message.pitch), yaw=math.degrees(message.yaw))
+    
+    def get_global(self):
+        message = self.connection.recv_match(type='GLOBAL_POSITION_INT', blocking=True)
+        return classes.Global_Position(alt=message.alt, relative_alt=message.relative_alt, vz=message.vz, vx=message.vx, vy=message.vy)
+    
+    def destroy(self):
+        self.connection.close()
