@@ -29,7 +29,8 @@ class App:
         self.groups = {
             "main": Groups.MainScreen(self),
             "settings": Groups.SettingsScreen(self),
-            "scale_keyboard": Keyboards.ScaleKeyBoard(self)
+            "scale_keyboard": Keyboards.ScaleKeyBoard(self),
+            "num_keyboard": Keyboards.NumKeyBoard(self)
         }
 
         self.touchable.update_app(self)
