@@ -23,5 +23,9 @@ class Adapter:
         message = self.connection.recv_match(type='GLOBAL_POSITION_INT', blocking=True)
         return classes.Global_Position(alt=message.alt, relative_alt=message.relative_alt, vz=message.vz, vx=message.vx, vy=message.vy)
     
+    def get_pressure(self):
+        message = self.connection.recv_match(type='SCALED_PRESSURE', blocking=True)
+        return message.press_abs
+
     def destroy(self):
         self.connection.close()

@@ -14,6 +14,8 @@ class MainScreen:
         self.screen = app.screen
         self.mav = MAVLinkAdapter.Adapter()
 
+        self.default_pressure = 1013.25
+
         # Horizon Setup
         self.horizon_sprite = pygame.transform.scale(pygame.image.load(RESOURCES_PATH + "Background.png"), (WIDTH*2, HEIGHT*2))
         self.horizon_rect = self.horizon_sprite.get_rect()
@@ -109,10 +111,13 @@ class MainScreen:
         time_surface = self.heading_font.render(str(self.time) + " (UTC)", True, (255, 255, 255))
         time_text_rect = heading_surface.get_rect(center=(WIDTH//2, HEIGHT-20))
 
-        alt_surface = self.heading_font.render(str(self.alt), True, (255, 255, 255))
+
+        pressure = self.mav.get_pressure()
+
+        alt_surface = self.heading_font.render(str(Func.calculate_height_from_pressure(self.default_pressure, pressure)), True, (255, 255, 255))
         alt_text_rect = heading_surface.get_rect(center=(50, HEIGHT//2-20))
 
-        relative_alt_surface = self.heading_font.render(str(self.relative_alt), True, (255, 255, 255))
+        relative_alt_surface = self.heading_font.render(str(self.alt), True, (255, 255, 255))
         relative_alt_text_rect = heading_surface.get_rect(center=(50, HEIGHT//2+20))
 
         horizon_speed_surface = self.heading_font.render("HorzS " + str(self.horizon_speed), True, (255, 255, 255))
@@ -158,6 +163,7 @@ class SettingsScreen:
 
         self.title_font = pygame.font.Font(size=75)
 
+
     def update(self):
         pass
 
@@ -167,6 +173,7 @@ class SettingsScreen:
         title_text_rect.center = (WIDTH//2, 50)
 
         self.screen.blit(title_text, title_text_rect)
+
         
 
         

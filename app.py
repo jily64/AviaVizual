@@ -1,5 +1,5 @@
 import pygame, sys, os, json, threading
-from Modules import Groups, Touch
+from Modules import Groups, Touch, Keyboards
 from dotenv import load_dotenv
 from pynput import mouse
 
@@ -12,12 +12,14 @@ class App:
     def __init__(self):
         pygame.init()
 
+        self.running = True
+
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("Avia Vizual 1.0")
 
         self.clock = pygame.time.Clock()
 
-        self.current_group = "main"
+        self.current_group = "scale_keyboard"
 
         self.touchable = Touch.Touchable(self)
 
@@ -26,18 +28,17 @@ class App:
 
         self.groups = {
             "main": Groups.MainScreen(self),
-            "settings": Groups.SettingsScreen(self)
+            "settings": Groups.SettingsScreen(self),
+            "scale_keyboard": Keyboards.ScaleKeyBoard(self)
         }
 
         self.touchable.update_app(self)
 
     def run(self):
-        running = True
-
-        while running:
+        while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False
+                    self.running = False
 
             self.groups[self.current_group].update()
 
@@ -52,6 +53,8 @@ class App:
 
         pygame.quit()
         sys.exit()
+        self.touchable.destroy()
+        self.listener_thread.join()
 
     def start_listener(self):
         with mouse.Listener(on_click=self.touchable.update) as listener:
@@ -62,6 +65,9 @@ class App:
             raise "Incorrect ID"
         
         self.current_group = id
+
+    def ping(self):
+        pass
 
 if __name__ == "__main__":
     app = App()
