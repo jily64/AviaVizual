@@ -71,6 +71,8 @@ class MainScreen:
         self.settings_rect = self.settings_sprite.get_rect()
         self.settings_rect.center = (75, 75)
 
+        self.app.touchable.add_rect(id="settings_button", obj=self.settings_rect, group="main", listner=self.settings_callback)
+
         # Menu Setup
         self.menu_sprite = pygame.transform.scale(pygame.image.load(RESOURCES_PATH + "Menu.png"), (100, 100))
         self.menu_rect = self.menu_sprite.get_rect()
@@ -145,6 +147,9 @@ class MainScreen:
         pygame.draw.line(self.screen, (235, 0, 0), self.left_body[0], self.left_body[1], self.left_body[2])
         pygame.draw.line(self.screen, (235, 0, 0), self.right_body[0], self.right_body[1], self.right_body[2])
 
+
+    def settings_callback(self):
+        self.app.change_group("settings")
 
 class SettingsScreen:
     def __init__(self, app):

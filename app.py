@@ -1,5 +1,5 @@
-import pygame, sys, os, json
-from Modules import Groups
+import pygame, sys, os, json, threading
+from Modules import Groups, Touch
 from dotenv import load_dotenv
 from pynput import mouse
 
@@ -17,12 +17,19 @@ class App:
 
         self.clock = pygame.time.Clock()
 
+        self.current_group = "main"
+
+        self.touchable = Touch.Touchable(self)
+
+        self.listener_thread = threading.Thread(target=self.start_listener)
+        self.listener_thread.start()
+
         self.groups = {
             "main": Groups.MainScreen(self),
             "settings": Groups.SettingsScreen(self)
         }
 
-        self.current_group = "main"
+        self.touchable.update_app(self)
 
     def run(self):
         running = True
@@ -42,8 +49,13 @@ class App:
 
             self.clock.tick(FPS)
 
+
         pygame.quit()
         sys.exit()
+
+    def start_listener(self):
+        with mouse.Listener(on_click=self.touchable.update) as listener:
+            listener.join()
     
     def change_group(self, id):
         if id not in self.groups:
