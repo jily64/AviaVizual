@@ -4,10 +4,7 @@ import math
 
 class Adapter:
     def __init__(self):
-        self.connection = mavutil.mavlink_connection('udp:127.0.0.1:14550', dialect="common")
-
-        if self.heartbeat():
-            print("MAVAdapter: Connected")
+        self.connection = mavutil.mavlink_connection('udp:127.0.0.1:14550')
         
 
     def heartbeat(self):

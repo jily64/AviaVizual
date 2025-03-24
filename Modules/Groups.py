@@ -1,6 +1,6 @@
 import pygame, os, math
 from dotenv import load_dotenv
-from Modules import MAVLinkAdapter, Func
+from Modules import MAVLinkAdapter, Func, Touch
 from datetime import datetime, timezone
 
 load_dotenv()
@@ -9,8 +9,9 @@ RESOURCES_PATH = os.getenv("RESOURCES_PATH")
 WIDTH, HEIGHT = int(os.getenv("SCREEN_WIDTH")), int(os.getenv("SCREEN_HEIGHT"))
 
 class MainScreen:
-    def __init__(self, screen):
-        self.screen = screen
+    def __init__(self, app):
+        self.app = app
+        self.screen = app.screen
         self.mav = MAVLinkAdapter.Adapter()
 
         # Horizon Setup
@@ -143,5 +144,24 @@ class MainScreen:
 
         pygame.draw.line(self.screen, (235, 0, 0), self.left_body[0], self.left_body[1], self.left_body[2])
         pygame.draw.line(self.screen, (235, 0, 0), self.right_body[0], self.right_body[1], self.right_body[2])
+
+
+class SettingsScreen:
+    def __init__(self, app):
+        self.app = app
+        self.screen = app.screen
+
+        self.title_font = pygame.font.Font(size=75)
+
+    def update(self):
+        pass
+
+    def render(self):
+        title_text = self.title_font.render("Settings",True, (255, 255, 255))
+        title_text_rect = title_text.get_rect()
+        title_text_rect.center = (WIDTH//2, 50)
+
+        self.screen.blit(title_text, title_text_rect)
+        
 
         

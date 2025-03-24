@@ -1,45 +1,56 @@
 import pygame, sys, os, json
 from Modules import Groups
 from dotenv import load_dotenv
-
+from pynput import mouse
 
 load_dotenv()
-pygame.init()
 
 WIDTH, HEIGHT = int(os.getenv("SCREEN_WIDTH")), int(os.getenv("SCREEN_HEIGHT"))
 FPS = int(os.getenv("SCREEN_FPS"))
 
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Avia Vizual 1.0")
+class App:
+    def __init__(self):
+        pygame.init()
 
-clock = pygame.time.Clock()
+        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        pygame.display.set_caption("Avia Vizual 1.0")
 
-groups = {
-    "main": Groups.MainScreen(screen)
-}
+        self.clock = pygame.time.Clock()
 
-current_group = "main"
+        self.groups = {
+            "main": Groups.MainScreen(self),
+            "settings": Groups.SettingsScreen(self)
+        }
 
-def main():
-    running = True
+        self.current_group = "main"
 
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
+    def run(self):
+        running = True
 
-        groups[current_group].update()
+        while running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
 
-        screen.fill((0, 0, 0))
+            self.groups[self.current_group].update()
 
-        groups[current_group].render()
+            self.screen.fill((0, 0, 0))
+
+            self.groups[self.current_group].render()
+            
+            pygame.display.flip()
+
+            self.clock.tick(FPS)
+
+        pygame.quit()
+        sys.exit()
+    
+    def change_group(self, id):
+        if id not in self.groups:
+            raise "Incorrect ID"
         
-        pygame.display.flip()
-
-        clock.tick(FPS)
-
-    pygame.quit()
-    sys.exit()
+        self.current_group = id
 
 if __name__ == "__main__":
-    main()
+    app = App()
+    app.run()
