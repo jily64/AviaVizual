@@ -1,4 +1,4 @@
-import pygame, os, math
+import pygame, os, math, json
 from dotenv import load_dotenv
 from Modules import MAVLinkAdapter, Func, Touch
 from datetime import datetime, timezone
@@ -14,7 +14,11 @@ class MainScreen:
         self.screen = app.screen
         self.mav = MAVLinkAdapter.Adapter()
 
-        self.default_pressure = 1013.25
+        self.state = "main"
+
+        self.save = {}
+
+        self.default_pressure = app.data["ground_preasure"]
 
         # Horizon Setup
         self.horizon_sprite = pygame.transform.scale(pygame.image.load(RESOURCES_PATH + "Background.png"), (WIDTH*2, HEIGHT*2))
@@ -80,12 +84,20 @@ class MainScreen:
         self.menu_rect = self.menu_sprite.get_rect()
         self.menu_rect.center = (WIDTH-75, 75)
 
+        # Pressure Setup
+        self.press_font = pygame.font.Font(size=50)
+        self.press_text = self.press_font.render("1013.25", True, (0, 0, 0))
+        self.press_rect = None
+
+        press_rect = self.press_text.get_rect(center=(WIDTH-100, HEIGHT-20))
+        self.app.touchable.add_rect(id="pressure_change", obj=press_rect, group="main", listner=self.pressure_callback)
+
 
     def update(self):
         angle_data = self.mav.get_ratio()
         global_data = self.mav.get_global()
 
-        delta_vert = round(math.cos(angle_data.pitch), 2)
+        delta_vert = round(-math.cos(angle_data.pitch), 2)
 
         self.time = datetime.now(timezone.utc).strftime("%H:%M:%S")
 
@@ -112,10 +124,13 @@ class MainScreen:
         time_text_rect = heading_surface.get_rect(center=(WIDTH//2, HEIGHT-20))
 
 
-        pressure = self.mav.get_pressure()
+        pressure = round(self.mav.get_pressure(), 2)
 
-        alt_surface = self.heading_font.render(str(Func.calculate_height_from_pressure(self.default_pressure, pressure)), True, (255, 255, 255))
+        alt_surface = self.heading_font.render(str(Func.calculate_height_from_pressure(self.app, self.default_pressure, pressure)), True, (255, 255, 255))
         alt_text_rect = heading_surface.get_rect(center=(50, HEIGHT//2-20))
+
+        press_surface = self.press_font.render(str(pressure) + " гПа", True, (255, 255, 255))
+        press_rect = press_surface.get_rect(center=(WIDTH-100, HEIGHT-20))
 
         relative_alt_surface = self.heading_font.render(str(self.alt), True, (255, 255, 255))
         relative_alt_text_rect = heading_surface.get_rect(center=(50, HEIGHT//2+20))
@@ -140,6 +155,8 @@ class MainScreen:
         self.screen.blit(alt_surface, alt_text_rect)
         self.screen.blit(relative_alt_surface, relative_alt_text_rect)
 
+        self.screen.blit(press_surface, press_rect)
+
         self.screen.blit(horizon_speed_surface, horizon_speed_rect)
 
         pygame.draw.line(self.screen, (235, 235, 0), self.indicate_heading[0], self.indicate_heading[1], self.indicate_heading[2])
@@ -152,9 +169,22 @@ class MainScreen:
         pygame.draw.line(self.screen, (235, 0, 0), self.left_body[0], self.left_body[1], self.left_body[2])
         pygame.draw.line(self.screen, (235, 0, 0), self.right_body[0], self.right_body[1], self.right_body[2])
 
+    def update_save(self):
+        with open("save.json", "r", encoding="UTF-8") as f:
+            self.save = json.load(f)
+
 
     def settings_callback(self):
         self.app.change_group("settings")
+    
+    def pressure_callback(self):
+        self.app.groups["scale_keyboard"].setup_value(value=self.default_pressure, callback=self.pressure_scale_callback, step=0.25)
+        self.app.change_group("scale_keyboard")
+
+    def pressure_scale_callback(self, value):
+        self.default_pressure = value
+        self.app.data["default_pressure"] = value
+        self.app.update_save()
 
 class SettingsScreen:
     def __init__(self, app):
@@ -162,6 +192,10 @@ class SettingsScreen:
         self.screen = app.screen
 
         self.title_font = pygame.font.Font(size=75)
+
+        # Смещения
+        self.button_padding_rect = pygame.Rect(100, 100, 750, 400)
+        self.button_padding_font = pygame.font.Font(size=150)
 
 
     def update(self):
@@ -172,7 +206,16 @@ class SettingsScreen:
         title_text_rect = title_text.get_rect()
         title_text_rect.center = (WIDTH//2, 50)
 
+        button_padding_text = self.button_padding_font.render("Смещения", True, (255, 255, 255))
+        button_padding_rect = button_padding_text.get_rect(center=(100+375, 100+200))
+        
+        pygame.draw.rect(self.screen, (200, 200, 0), self.button_padding_rect)
+
         self.screen.blit(title_text, title_text_rect)
+        self.screen.blit(button_padding_text, button_padding_rect)
+
+
+
 
         
 

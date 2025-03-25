@@ -8,11 +8,9 @@ def rotate_point(center, point, angle):
     cx, cy = center
     px, py = point
 
-    # Поворачиваем точку
     s = math.sin(math.radians(angle))
     c = math.cos(math.radians(angle))
 
-    # Новые координаты
     x_new = c * (px - cx) - s * (py - cy) + cx
     y_new = s * (px - cx) + c * (py - cy) + cy
 
@@ -23,7 +21,7 @@ def count_speed_module(vx, vy):
 
 
 
-def calculate_height_from_pressure(P_ground, P_height, T=288.15, L=0.0065, R=8.31447, g=9.80665, M=0.0289644):
+def calculate_height_from_pressure(app, P_ground, P_height, T=288.15, L=0.0065, R=8.31447, g=9.80665, M=0.0289644):
     # Преобразуем давление из гПа в Па
     P_ground = P_ground * 100
     P_height = P_height * 100

@@ -14,12 +14,14 @@ class App:
 
         self.running = True
 
+        self.load_save()
+
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("Avia Vizual 1.0")
 
         self.clock = pygame.time.Clock()
 
-        self.current_group = "scale_keyboard"
+        self.current_group = "main"
 
         self.touchable = Touch.Touchable(self)
 
@@ -69,6 +71,15 @@ class App:
 
     def ping(self):
         pass
+
+
+    def load_save(self):
+        with open("save.json", "r", encoding="UTF-8") as f:
+            self.data = json.load(f)
+
+    def update_save(self):
+        with open("save.json", "w", encoding="UTF-8") as f:
+            json.dump(self.data, f)
 
 if __name__ == "__main__":
     app = App()

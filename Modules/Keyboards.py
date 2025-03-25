@@ -249,13 +249,20 @@ class NumKeyBoard:
             self.value = self.value[:-1]
 
     def ready_callback(self):
+        self.callback(self.value)
         self.app.change_group(self.return_group)
+
+    def setup_value(self, value, callback, return_group="main"):
+        self.value = int(value)
+        self.callback = callback
+        self.return_group = return_group
 
 
 class ScaleKeyBoard:
     def __init__(self, app):
         self.app = app
         self.screen = app.screen
+        self.callback = None
 
         self.value = 1013.25
         self.set_value = 1
@@ -303,13 +310,6 @@ class ScaleKeyBoard:
 
         self.app.touchable.add_rect(id="sk_ready", obj=self.ready_button_rect, group="scale_keyboard", listner=self.ready_callback)
 
-
-    def new_value(self, value, set_value=1, return_group="main", mark="гПа"):
-        self.value = value
-        self.set_value = set_value
-        self.return_group = return_group
-        self.mark = mark
-
     def update(self):
         self.value_text = self.value_font.render(str(self.value) + " " + self.mark, True, (255, 255, 255))
         self.value_text_rect = self.value_text.get_rect()
@@ -335,4 +335,11 @@ class ScaleKeyBoard:
         self.value -= self.set_value
 
     def ready_callback(self):
+        self.callback(self.value)
         self.app.change_group(self.return_group)
+
+    def setup_value(self, value, callback, step=1, return_group="main"):
+        self.value = int(value)
+        self.callback = callback
+        self.return_group = return_group
+        self.set_value = step
