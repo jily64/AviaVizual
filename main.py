@@ -1,3 +1,14 @@
-from Modules import Func
+from Modules import TimeHead
+import time 
 
-print(Func.count_speed_module(-100, 500))
+
+time_hd = TimeHead.TimeHead("app")
+
+time_hd.set_zone(2, 1, "m")
+time_hd.set_active()
+print(time_hd.zones[2])
+
+while True:
+    time_hd.update()
+    print(time_hd.is_active, time_hd.active_zone)
+    time.sleep(0.5)

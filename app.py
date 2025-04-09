@@ -1,5 +1,5 @@
 import pygame, sys, os, json, threading
-from Modules import Groups, Touch, Keyboards
+from Modules import Groups, Touch, Keyboards, TimeHead
 from dotenv import load_dotenv
 from pynput import mouse
 
@@ -28,14 +28,18 @@ class App:
         self.listener_thread = threading.Thread(target=self.start_listener)
         self.listener_thread.start()
 
+        self.t_h = TimeHead.TimeHead(self)
+
         self.groups = {
             "main": Groups.MainScreen(self),
-            "settings": Groups.SettingsScreen(self),
+            "head_menu": Groups.HeadingPlanner(self),
             "scale_keyboard": Keyboards.ScaleKeyBoard(self),
             "num_keyboard": Keyboards.NumKeyBoard(self)
         }
 
         self.touchable.update_app(self)
+        
+        
 
     def run(self):
         while self.running:
@@ -43,15 +47,17 @@ class App:
                 if event.type == pygame.QUIT:
                     self.running = False
 
+            self.t_h.update()
+
             self.groups[self.current_group].update()
 
             self.screen.fill((0, 0, 0))
 
             self.groups[self.current_group].render()
-            
+
             pygame.display.flip()
 
-            self.clock.tick(FPS)
+            self.clock.tick(60)
 
 
         pygame.quit()

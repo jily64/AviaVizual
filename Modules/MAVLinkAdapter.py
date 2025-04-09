@@ -4,12 +4,24 @@ import math
 
 class Adapter:
     def __init__(self):
-        self.connection = mavutil.mavlink_connection('udp:127.0.0.1:14550')
-        
+        self.connection = mavutil.mavlink_connection('udp:192.168.4.1:14555', baud=921600)
+        self.heartbeat()
+        self.arm_diarm()
 
     def heartbeat(self):
         self.connection.wait_heartbeat()
         return True
+    
+    def arm_diarm(self):
+        self.connection.mav.command_long_send(
+        self.connection.target_system,  # ID системы
+        self.connection.target_component,  # ID компонента
+        mavutil.mavlink.MAV_CMD_COMPONENT_ARM_DISARM,  # Команда ARM
+        0,  # Подтверждение
+        1,  # Параметр 1: 1 для ARM
+        0,  # Параметр 2: 0 для силы
+        0, 0, 0, 0, 0  # Остальные параметры
+        )
     
     def get_current_heading(self):
         message = self.connection.recv_match(type='VFR_HUD', blocking=True)

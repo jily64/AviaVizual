@@ -20,6 +20,8 @@ class NumKeyBoard:
         self.button_size = 240
         self.button_padding = 25
 
+        self.special_value = None
+
         # Button Text Setup
         self.button_font = pygame.font.Font(size=225)
 
@@ -132,11 +134,11 @@ class NumKeyBoard:
         self.dot_button_rect = self.dot_button_sprite.get_rect()
         self.dot_button_rect.center = (self.button_size/2+self.button_padding, self.button_size/2+self.button_padding*4+self.button_size*3)
         
-        self.dot_button_text = self.button_font.render(".", True, (255, 255, 255))
+        self.dot_button_text = self.button_font.render(":", True, (255, 255, 255))
         self.dot_button_text_rect = self.dot_button_text.get_rect()
         self.dot_button_text_rect.center = (self.button_size/2+self.button_padding, self.button_size/2+self.button_padding*4+self.button_size*3)
 
-        self.app.touchable.add_rect(id="nk_.", obj=self.dot_button_rect, group="num_keyboard", listner=self.dot_callback)
+        self.app.touchable.add_rect(id="nk_:", obj=self.dot_button_rect, group="num_keyboard", listner=self.dot_callback)
 
         # 0 Button 
         self.zero_button_sprite = pygame.transform.scale(pygame.image.load(RESOURCES_PATH + "Button.png"), (self.button_size, self.button_size))
@@ -238,8 +240,8 @@ class NumKeyBoard:
         self.value += "9"
 
     def dot_callback(self):
-        if "." not in self.value:
-            self.value += "."
+        if ":" not in self.value:
+            self.value += ":"
 
     def zero_callback(self):
         self.value += "0"
@@ -252,10 +254,11 @@ class NumKeyBoard:
         self.callback(self.value)
         self.app.change_group(self.return_group)
 
-    def setup_value(self, value, callback, return_group="main"):
+    def setup_value(self, value, callback, return_group="main", special_value=None):
         self.value = int(value)
         self.callback = callback
         self.return_group = return_group
+        self.special_value = special_value
 
 
 class ScaleKeyBoard:
@@ -311,11 +314,12 @@ class ScaleKeyBoard:
         self.app.touchable.add_rect(id="sk_ready", obj=self.ready_button_rect, group="scale_keyboard", listner=self.ready_callback)
 
     def update(self):
+        pass
+
+    def render(self):
         self.value_text = self.value_font.render(str(self.value) + " " + self.mark, True, (255, 255, 255))
         self.value_text_rect = self.value_text.get_rect()
         self.value_text_rect.center = (WIDTH//2, HEIGHT//2-250)
-
-    def render(self):
 
         self.screen.blit(self.plus_button_sprite, self.plus_button_rect)
         self.screen.blit(self.minus_button_sprite, self.minus_button_rect)
