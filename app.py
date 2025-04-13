@@ -16,7 +16,7 @@ class App:
 
         self.load_save()
 
-        self.screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
+        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("Avia Vizual 1.0")
 
         self.clock = pygame.time.Clock()
