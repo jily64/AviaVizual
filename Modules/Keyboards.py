@@ -23,10 +23,10 @@ class NumKeyBoard:
         self.special_value = None
 
         # Button Text Setup
-        self.button_font = pygame.font.Font(size=225)
+        self.button_font = pygame.font.Font(None, 225)
 
         # Value Text
-        self.value_font = pygame.font.Font(size=100)
+        self.value_font = pygame.font.Font(None, 100)
         self.value_text = None
         self.value_text_rect = None
 
@@ -273,10 +273,9 @@ class ScaleKeyBoard:
         self.mark = "гПа"
 
         # Button Text Setup
-        self.button_font = pygame.font.Font(size=500)
+        self.button_font = pygame.font.Font(None, 500)
 
         # Value Text
-        self.value_font = pygame.font.Font(size=100)
         self.value_text = None
         self.value_text_rect = None
 

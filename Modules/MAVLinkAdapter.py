@@ -4,7 +4,7 @@ import math
 
 class Adapter:
     def __init__(self):
-        self.connection = mavutil.mavlink_connection('udp:192.168.4.1:14555', baud=921600)
+        self.connection = mavutil.mavlink_connection('udp:0.0.0.0:14550', baud=921600)
         self.heartbeat()
         self.arm_diarm()
 

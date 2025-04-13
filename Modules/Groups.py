@@ -41,7 +41,7 @@ class MainScreen:
         self.compass_sprite_current = self.compass_sprite
 
         # Heading Setup
-        self.heading_font = pygame.font.Font(size=50)
+        self.heading_font = pygame.font.Font(None, 50)
         self.heading = 0
 
         self.indicate_heading = [(WIDTH//2, HEIGHT//3-135), (WIDTH//2, HEIGHT//3-50), 7]
@@ -54,22 +54,22 @@ class MainScreen:
         self.right_body = [(WIDTH//2+50, HEIGHT//2-25), (WIDTH//2, HEIGHT//2), 7]
 
         # Altitude Setup
-        self.alt_font = pygame.font.Font(size=50)
+        self.alt_font = pygame.font.Font(None, 50)
         self.alt = 0
 
-        self.relative_alt_font = pygame.font.Font(size=50)
+        self.relative_alt_font = pygame.font.Font(None, 50)
         self.relative_alt = 0
 
         # Speed Setup
-        self.horizon_speed_font = pygame.font.Font(size=50)
+        self.horizon_speed_font = pygame.font.Font(None, 50)
         self.horizon_speed = 0
 
         # Vertical Speed Setup
-        self.vertical_speed_font = pygame.font.Font(size=50)
+        self.vertical_speed_font = pygame.font.Font(None, 50)
         self.vertical_speed = 0
 
         # Time Setup
-        self.time_font = pygame.font.Font(size=50)
+        self.time_font = pygame.font.Font(None, 50)
         self.time = datetime.now(timezone.utc).strftime("%H:%M:%S")
 
         # Settings Setup
@@ -85,7 +85,7 @@ class MainScreen:
         self.menu_rect.center = (WIDTH-75, 75)
 
         # Pressure Setup
-        self.press_font = pygame.font.Font(size=50)
+        self.press_font = pygame.font.Font(None, 50)
         self.press_text = self.press_font.render("1013.25", True, (0, 0, 0))
         self.press_rect = None
 
@@ -93,7 +93,7 @@ class MainScreen:
         self.app.touchable.add_rect(id="pressure_change", obj=press_rect, group="main", listner=self.pressure_callback)
 
         # FPS Setup
-        self.fps_font = pygame.font.Font(size=50)
+        self.fps_font = pygame.font.Font(None, 50)
 
 
     def update(self):
@@ -196,7 +196,7 @@ class HeadingPlanner:
         self.screen = app.screen
         self.zones = app.t_h.zones_count//2
 
-        self.title_font = pygame.font.Font(size=75)
+        self.title_font = pygame.font.Font(None, 75)
 
         self.GREEN = (0, 230, 0)
         self.RED = (230, 0, 0)
@@ -211,7 +211,7 @@ class HeadingPlanner:
         self.texts = [[], []]
 
         self.texts = []
-        self.main_font = pygame.font.Font(size=100)
+        self.main_font = pygame.font.Font(None, 75)
 
         self.padding = 50
         self.size = [400, 150]
